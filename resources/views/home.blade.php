@@ -8,28 +8,28 @@
             </h1>
             <p class="text-xl font-bold text-gray-700">Teste seus conhecimentos!</p>
             @error('questions')
-                <p class="text-red-400 font-bold">{{ $message }}</p>
+            <p class="text-red-400 font-bold">{{ $message }}</p>
             @enderror
         </div>
 
-        <form action="{{ route('prepare') }}" class="mb-6 bg-yellow-100 p-6 rounded-2xl border-4 border-black shadow-lg">
+        <form method="POST" action="{{ route('prepareGame') }}">
             @csrf
-            <label for="questions" class="block text-gray-800 font-black text-lg mb-3">
-                ⭐ Quantas perguntas?
-            </label>
-            <input
-                name="questions"
-                type="number"
-                min="1"
-                max="50"
-                value="5"
-                required
-                class="w-full px-4 py-4 border-4 border-black rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-400 font-bold text-2xl text-center bg-white shadow-lg">
-        </form>
+            <div class="mb-6 bg-yellow-100 p-6 rounded-2xl border-4 border-black shadow-lg">
 
-        <button type="submit" class="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white font-black text-xl py-5 rounded-2xl border-4 border-black shadow-lg hover:shadow-2xl transform hover:scale-105 hover:-rotate-2 transition duration-200">
-            COMEÇAR!
-        </button>
+                <label for="questions" class="block text-gray-800 font-black text-lg mb-3">
+                    ⭐ Quantas perguntas?
+                </label>
+                <input
+                    name="questions"
+                    type="number"
+                    value="{{ old('questions',5) }}"
+                    class="w-full px-4 py-4 border-4 border-black rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-400 font-bold text-2xl text-center bg-white shadow-lg">
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white font-black text-xl py-5 rounded-2xl border-4 border-black shadow-lg hover:shadow-2xl transform hover:scale-105 hover:-rotate-2 transition duration-200">
+                COMEÇAR!
+            </button>
+        </form>
     </div>
 
 </x-main-layout>

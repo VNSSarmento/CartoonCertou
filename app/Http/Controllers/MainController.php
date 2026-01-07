@@ -51,24 +51,43 @@ class MainController extends Controller
         $questions = [];
 
         //quantas questoes eu tenho
-        
+        $total_questions = count($this->app_data);
         //criar um indice unico para cada questão
-        
+        $indexes = range(0,$total_questions - 1);
         //embaralhar as ordens dos indices
-        
+        shuffle($indexes);
         //retirar apenas a quantidade de indices de acordo com a quantidade de questoes
-        
+        $indexes = array_slice($indexes,0,$value);
         //varivel auxiliar para iniciar o quiz
+        $question_number = 1;
 
-         
         //fazer o loop com
-        //array question com: indice da questao, pergunta, resposta correta, e 3 alternativas errada 
-        //um array com todas as alternativas
-        //depois tirar do array a alternativa correta com o array diff
-        //misturar as alternativas erradas
-        //inserir no array question as alternativas erradas
-        //interir uma chave no array de correct = null que vai comparar a alternativa
-        //inserir o array de question no array de todas as questoes
+        foreach($indexes as $index){
+            //array question com: indice da questao, pergunta, resposta correta, e 3 alternativas errada 
+            $question = [];
+            $question['question_number'] = $question_number++;
+            $question['country'] = $this->app_data[$index]['country'];
+            $question['result'] = $this->app_data[$index]['capital'];
+
+            //um array com todas as alternativas
+            $othersResults = array_column($this->app_data,'capital');
+
+            //depois tirar do array a alternativa correta com o array diff
+            $othersResults = array_diff( $othersResults, [$question['result']]);
+            
+            //misturar as alternativas erradas, pq sempre que chamar a proxima questao, nao vai vir as mesma alterantivas de sempre
+            shuffle($othersResults);
+            //inserir no array question as alternativas erradas
+            $question['others_alternatives'] = array_slice($othersResults,0,3);
+            //interir uma chave no array de correct = null que vai comparar a alternativa
+            $question['select_alternative'] = null;
+
+            //inserir o array de question no array de todas as questoes
+            
+            $questions[] = $question;
+        }
+
+        return $questions;
 
     }
 }

@@ -3,9 +3,11 @@
         <span class="text-lg font-black text-gray-800 bg-blue-200 px-4 py-2 rounded-full border-4 border-black">
             📝 Pergunta {{ $currentQuestion + 1 }} de {{ $totalQuestions }}
         </span>
+        {{--  
         <span class="bg-yellow-300 text-gray-800 px-4 py-2 rounded-full border-4 border-black font-black text-lg">
             ⏰ 00:45
         </span>
+        --}}
     </div>
 
     <div class="w-full bg-gray-800 rounded-full h-6 mb-6 border-4 border-black shadow-lg">

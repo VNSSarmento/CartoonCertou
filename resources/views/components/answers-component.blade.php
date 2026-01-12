@@ -22,7 +22,7 @@
 @endphp
 
 
-<a href="{{ route('answer',Crypt::encryptString($answer['text'])) }}" class="w-full cursor-pointer text-left px-6 py-5 border-4 border-black rounded-2xl flex items-center group shadow-lg {{ $containerClasses }}">
+<a href="{{ route('answer',Crypt::encryptString($answer['text'])) }}" class="w-full cursor-pointer text-left px-6 py-5 border-4 border-black rounded-2xl flex items-center group shadow-lg {{ $containerClasses }} {{ $answer['state'] !== 'default' ? 'pointer-events-none' : '' }} ">
     
     <span class="w-12 h-12 rounded-full text-white flex items-center justify-center font-black text-xl mr-4 border-4 border-black {{ $badgeClasses }}">
         {{ $answer['label'] }}

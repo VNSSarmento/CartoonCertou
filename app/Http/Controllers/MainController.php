@@ -23,7 +23,12 @@ class MainController extends Controller
 
     public function startGame(): View
     {
-
+        session()->forget([
+            'wrong_answer',
+            'current_question',
+            'correct_answers',
+            'wrong_answers'
+        ]);
         return view('home');
     }
 
@@ -93,11 +98,11 @@ class MainController extends Controller
         $totalQuestions = session('total_questions');
         $currentQuestion = session('current_question') - 1;
 
-
         $rawAnswers = $quiz[$currentQuestion]['wrong_answers'];
         $rawAnswers[] = $quiz[$currentQuestion]['result'];
 
         shuffle($rawAnswers);
+        session()->put('current_shuffled_answers', $rawAnswers);
 
         $labels = ['A', 'B', 'C', 'D'];
         $answers = [];
@@ -121,7 +126,6 @@ class MainController extends Controller
 
     public function answer($encrypAnswer)
     {
-
         try {
             $answer = Crypt::decryptString($encrypAnswer);
         } catch (Exception $e) {
@@ -129,27 +133,86 @@ class MainController extends Controller
         }
 
         $quiz = session('quiz');
-        $currentQuestion = $quiz['current_question'] - 1;
-        $corretAnswer = $quiz[$currentQuestion]['result'];
-        $corretAnswers = session('correct_answer');
-        $wrongAnswers = session('wrong_answer');
 
-        if ($corretAnswer == $answer) {
-            $corretAnswers++;
+        $currentQuestion = session('current_question') - 1;
+
+        $questionData = $quiz[$currentQuestion];
+        $correctAnswerText = $questionData['result'];
+
+        $isCorrect = ($correctAnswerText == $answer);
+
+        if ($isCorrect) {
+            session()->increment('correct_answers');
             $quiz[$currentQuestion]['correct'] = true;
         } else {
-            $wrongAnswers++;
+            session()->increment('wrong_answers');
             $quiz[$currentQuestion]['correct'] = false;
         }
 
-        session()->put([
-            'quiz' => $quiz,
-            'correctAnswers' => $corretAnswers,
-            'wrongAnswers' => $wrongAnswers,
-        ]);
+        session()->put('quiz', $quiz);
 
-        $data = [
-            'country' => $quiz[$corretAnswer]['question']
-        ]
+        $rawAnswers = session('current_shuffled_answers');
+
+        $labels = ['A', 'B', 'C', 'D'];
+        $answersFormatted = [];
+
+        foreach ($rawAnswers as $index => $text) {
+            $state = 'default';
+
+            if ($text === $answer) {
+                $state = $isCorrect ? 'correct' : 'wrong';
+            }
+
+            //mostrar qual era a certa mesmo se ele errou
+            if ($text === $correctAnswerText && !$isCorrect) {
+                $state = 'correct';
+            }
+
+            $answersFormatted[] = [
+                'label' => $labels[$index] ?? '',
+                'state' => $state,
+                'text' => $text
+            ];
+        }
+
+        return view('game', [
+            'question' => $questionData['questions'],
+            'totalQuestions' => session('total_questions'),
+            'currentQuestion' => $currentQuestion,
+            'answers' => $answersFormatted,
+            'showNextButton' => true
+        ]);
     }
+
+    public function nextQuestion()
+    {
+        $quiz = session('quiz');
+        $current_question = session('current_question');
+        $index = $current_question - 1;
+        $total_questions = session('total_questions');
+
+        if (is_null($quiz[$index]['correct'])) {
+            return redirect()->route('game')
+                ->with('error', '⚠️ Você precisa escolher uma resposta!');
+        }
+
+        // 2. Se já respondeu e chegou no fim
+        if ($current_question >= $total_questions) {
+            //dd(session()->all());    
+            return redirect()->route('result');
+        }
+
+        // 3. Se respondeu, passa para a próxima
+        session()->increment('current_question');
+        return redirect()->route('game');
+
+    }
+
+    public function resultGame(): View{
+        $corretAnswer = session('correct_answers');
+        $totalQuestion = session('total_questions');
+        $notion = round(( ($corretAnswer*100)/$totalQuestion),0);
+        return view('result')->with('progress',$notion);
+    }
+
 }

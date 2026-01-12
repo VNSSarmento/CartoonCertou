@@ -12,7 +12,7 @@
 
     <div class="w-full bg-gray-800 rounded-full h-6 mb-6 border-4 border-black shadow-lg">
         <div class="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 h-full rounded-full flex items-center justify-end pr-2 w-[{{ $progress }}%]">
-            <span class="text-white font-black text-xs">{{ $progress}}%</span>
+            <span class="text-white font-black text-xs">{{ $progress }}%</span>
         </div>
     </div>
 </div>

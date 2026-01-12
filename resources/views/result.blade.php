@@ -26,10 +26,18 @@
                     <x-slot:data>{{ session('wrong_answers') }}</x-slot:data>
             </x-card-component>
 
-            <div class="bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-300 rounded-2xl p-8 border-4 border-black shadow-xl transform rotate-2">
+            <div class=" {{ 
+                $progress <= 60 ? 
+                    "bg-gradient-to-r from-pink-300 via-orange-300 to-red-200 rounded-2xl p-8 border-4 border-black shadow-xl transform rotate-2" : 
+                    "bg-gradient-to-r from-blue-300 via-green-300 to-blue-200 rounded-2xl p-8 border-4 border-black shadow-xl transform rotate-2"
+                    }}
+                ">
                 <div class="text-center">
                     <span class="block text-gray-900 font-black text-2xl mb-3">⭐ SUA NOTA ⭐</span>
-                    <span class="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-orange-600" style="text-shadow: 4px 4px 0px rgba(0,0,0,0.1);">
+                    <span class=" {{ 
+                        $progress <= 60 ? 
+                        "text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600" : 
+                        "text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-green-800" }}" style="text-shadow: 4px 4px 0px rgba(0,0,0,0.1);">
                         {{ $progress }}%
                     </span>
                 </div>
